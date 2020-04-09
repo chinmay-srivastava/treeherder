@@ -15,7 +15,6 @@ export default class TestMetric extends React.PureComponent {
       currentRepo,
       searchStr,
       jobs,
-      showParentMatches,
       regressionsOrderBy,
       regressionsGroupBy,
       knownIssuesOrderBy,
@@ -31,17 +30,12 @@ export default class TestMetric extends React.PureComponent {
     let filteredNeedInvestigation = needInvestigation;
     let filteredKnownIssues = knownIssues;
 
-    if (searchStr.length || !showParentMatches) {
+    if (searchStr.length) {
       filteredNeedInvestigation = filterTests(
-        needInvestigation,
+        needInvestigation.tests,
         searchStr,
-        showParentMatches,
       );
-      filteredKnownIssues = filterTests(
-        knownIssues,
-        searchStr,
-        showParentMatches,
-      );
+      filteredKnownIssues = filterTests(knownIssues.tests, searchStr);
     }
 
     return (
@@ -49,6 +43,7 @@ export default class TestMetric extends React.PureComponent {
         <ClassificationGroup
           jobs={jobs}
           tests={filteredNeedInvestigation}
+          unstructuredFailures={needInvestigation.unstructuredFailures}
           name="Possible Regressions"
           repo={repo}
           currentRepo={currentRepo}
@@ -81,6 +76,7 @@ export default class TestMetric extends React.PureComponent {
         <ClassificationGroup
           jobs={jobs}
           tests={filteredKnownIssues}
+          unstructuredFailures={knownIssues.unstructuredFailures}
           name="Known Issues"
           repo={repo}
           currentRepo={currentRepo}
@@ -120,8 +116,14 @@ TestMetric.propTypes = {
     name: PropTypes.string.isRequired,
     result: PropTypes.string.isRequired,
     details: PropTypes.shape({
-      needInvestigation: PropTypes.array.isRequired,
-      knownIssues: PropTypes.array.isRequired,
+      needInvestigation: PropTypes.shape({
+        tests: PropTypes.array.isRequired,
+        unstructuredFailures: PropTypes.array.isRequired,
+      }),
+      knownIssues: PropTypes.shape({
+        tests: PropTypes.array.isRequired,
+        unstructuredFailures: PropTypes.array.isRequired,
+      }),
     }).isRequired,
   }).isRequired,
   repo: PropTypes.string.isRequired,
@@ -129,7 +131,6 @@ TestMetric.propTypes = {
   revision: PropTypes.string.isRequired,
   notify: PropTypes.func.isRequired,
   searchStr: PropTypes.string.isRequired,
-  showParentMatches: PropTypes.bool.isRequired,
   testGroup: PropTypes.string,
   regressionsOrderBy: PropTypes.string,
   regressionsGroupBy: PropTypes.string,

@@ -72,7 +72,6 @@ class PlatformConfig extends React.PureComponent {
       jobName,
       key,
       tier,
-      failedInParent,
       jobGroupSymbol,
       jobSymbol,
     } = failure;
@@ -127,7 +126,6 @@ class PlatformConfig extends React.PureComponent {
                 </span>
               );
             })}
-            {!!failedInParent && <Badge color="info">Failed In Parent</Badge>}
             <Button
               onClick={() => this.retriggerTask(taskList[0])}
               outline
@@ -155,19 +153,18 @@ class PlatformConfig extends React.PureComponent {
 
 PlatformConfig.propTypes = {
   failure: PropTypes.shape({
-    testName: PropTypes.string.isRequired,
+    testName: PropTypes.string,
     jobName: PropTypes.string.isRequired,
     jobSymbol: PropTypes.string.isRequired,
-    confidence: PropTypes.number.isRequired,
     platform: PropTypes.string.isRequired,
     config: PropTypes.string.isRequired,
-    suggestedClassification: PropTypes.string.isRequired,
     key: PropTypes.string.isRequired,
   }).isRequired,
   currentRepo: PropTypes.shape({}).isRequired,
   notify: PropTypes.func.isRequired,
   groupedBy: PropTypes.string.isRequired,
   updateParamsAndState: PropTypes.func.isRequired,
+  jobs: PropTypes.shape({}).isRequired,
 };
 
 export default PlatformConfig;

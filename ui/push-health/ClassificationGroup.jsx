@@ -25,6 +25,7 @@ import groupBy from 'lodash/groupBy';
 import JobModel from '../models/job';
 
 import Action from './Action';
+import PlatformConfig from './PlatformConfig';
 
 class ClassificationGroup extends React.PureComponent {
   constructor(props) {
@@ -83,6 +84,7 @@ class ClassificationGroup extends React.PureComponent {
       jobs,
       tests,
       name,
+      unstructuredFailures,
       revision,
       className,
       hasRetriggerAll,
@@ -263,6 +265,22 @@ class ClassificationGroup extends React.PureComponent {
               updateParamsAndState={updateParamsAndState}
             />
           ))}
+          {!!unstructuredFailures.length && (
+            <div className="ml-4 mt-2">
+              <h5>Regressions without structured logs</h5>
+              {unstructuredFailures.map((line) => (
+                <PlatformConfig
+                  failure={line}
+                  currentRepo={currentRepo}
+                  notify={notify}
+                  groupedBy="path"
+                  updateParamsAndState={updateParamsAndState}
+                  jobs={jobs}
+                  key={line.key}
+                />
+              ))}
+            </div>
+          )}
         </Collapse>
       </Row>
     );
@@ -271,6 +289,7 @@ class ClassificationGroup extends React.PureComponent {
 
 ClassificationGroup.propTypes = {
   tests: PropTypes.arrayOf(PropTypes.object).isRequired,
+  unstructuredFailures: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   name: PropTypes.string.isRequired,
   currentRepo: PropTypes.shape({}).isRequired,
   revision: PropTypes.string.isRequired,
