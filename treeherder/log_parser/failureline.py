@@ -138,13 +138,19 @@ def create_failure_line(job_log, failure_line):
 
 
 def create(job_log, log_list):
-    for failure_line in log_list:
+    for idx, failure_line in enumerate(log_list):
         action = failure_line['action']
         if action not in FailureLine.ACTION_LIST:
             newrelic.agent.record_custom_event("unsupported_failure_line_action", failure_line)
-            # Unfortunately, these two errors flod the logs
-            if action not in ['group_result', 'test_groups']:
+            # Unfortunately, these two errors flood the logs
+            if action not in ['test_groups']:
                 logger.exception(ValueError(f'Unsupported FailureLine ACTION: {action}'))
+        if action == 'group_result':
+            # All the group results will have the same line value, which
+            # conflicts with one of our uniqueness indexes.  So we need to
+            # increment the line value.
+            failure_line['line'] += idx
+
     failure_lines = [
         create_failure_line(job_log, failure_line)
         for failure_line in log_list

@@ -945,7 +945,7 @@ class FailureLine(models.Model):
     STATUS_LIST = ('PASS', 'FAIL', 'OK', 'ERROR', 'TIMEOUT', 'CRASH', 'ASSERT', 'SKIP', 'NOTRUN')
     # Truncated is a special action that we use to indicate that the list of failure lines
     # was truncated according to settings.FAILURE_LINES_CUTOFF.
-    ACTION_LIST = ("test_result", "log", "crash", "truncated")
+    ACTION_LIST = ("test_result", "log", "crash", "truncated", "group_result")
     LEVEL_LIST = ("critical", "error", "warning", "info", "debug")
 
     # Python 3's zip produces an iterable rather than a list, which Django's `choices` can't handle.
@@ -959,7 +959,7 @@ class FailureLine(models.Model):
     job_log = models.ForeignKey(
         JobLog, on_delete=models.CASCADE, null=True, related_name="failure_line"
     )
-    action = models.CharField(max_length=11, choices=ACTION_CHOICES)
+    action = models.CharField(max_length=15, choices=ACTION_CHOICES)
     line = models.PositiveIntegerField()
     test = models.TextField(blank=True, null=True)
     subtest = models.TextField(blank=True, null=True)

@@ -166,3 +166,24 @@ def test_store_error_summary_duplicate(activate_responses, test_repository, test
     )
 
     assert FailureLine.objects.count() == 2
+
+
+def test_store_error_summary_group_result(activate_responses, test_repository, test_job):
+    log_path = SampleData().get_log_path("mochitest-browser-chrome_errorsummary.log")
+    log_url = 'http://my-log.mozilla.org'
+
+    with open(log_path) as log_handler:
+        responses.add(responses.GET, log_url, body=log_handler.read(), status=200)
+
+    log_obj = JobLog.objects.create(job=test_job, name="errorsummary_json", url=log_url)
+
+    store_failure_lines(log_obj)
+
+    assert FailureLine.objects.count() == 34
+    assert Group.objects.count() == 29
+
+    failure = FailureLine.objects.filter(action='group_result').first()
+
+    assert failure.group.all().first().name == "dom/base/test"
+    assert failure.job_guid == test_job.guid
+    assert failure.repository == test_repository
