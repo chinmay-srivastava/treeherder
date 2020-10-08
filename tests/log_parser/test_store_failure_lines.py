@@ -179,11 +179,11 @@ def test_store_error_summary_group_result(activate_responses, test_repository, t
 
     store_failure_lines(log_obj)
 
-    assert FailureLine.objects.count() == 34
-    assert Group.objects.count() == 29
+    assert FailureLine.objects.count() == 6
+    assert Group.objects.count() == 1
 
     failure = FailureLine.objects.filter(action='group_result').first()
 
-    assert failure.group.all().first().name == "dom/base/test"
+    assert failure.group.all().first().name == "toolkit/components/pictureinpicture/tests"
     assert failure.job_guid == test_job.guid
     assert failure.repository == test_repository

@@ -154,7 +154,7 @@ def create(job_log, log_list):
     failure_lines = [
         create_failure_line(job_log, failure_line)
         for failure_line in log_list
-        if failure_line['action'] in FailureLine.ACTION_LIST
+        if failure_line['action'] in FailureLine.ACTION_LIST and failure_line['status'] != "OK"
     ]
     job_log.update_status(JobLog.PARSED)
     return failure_lines
